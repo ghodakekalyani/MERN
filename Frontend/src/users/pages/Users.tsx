@@ -23,33 +23,10 @@ const Users = () => {
       places: 1,
     },
   ];
-  // const initState = useSelector((state: RootState) => state.userReducer);
-  // const dispatch = useDispatch();
-  // console.log("initState-----", initState);
-
-  // useEffect(() => {
-  //   dispatch(fetchUserName("kalyani"));
-  // }, []);
-
-  // const fetchUserList = async() => {
-  //   try {
-  //   const response = await (await fetch("url", {method: 'POST', body: JSON.stringify({})})).json();
-  //   if(!response.ok) {
-  //     throw new Error("Something went wrong");
-  //   }
-  //   return response;
-  //   } catch(err: any) {
-  //       console.log(err);
-  //   }
-
-  // }
 
   return (
     <>
       <UserList users={users} />
-      {/* <Button onClick={() => dispatch(fetchUserName("kalyani"))}>
-        click me!
-      </Button> */}
     </>
   );
 };
