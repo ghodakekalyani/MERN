@@ -1,5 +1,7 @@
 const HttpError = require("../modules/http-error");
+const { validationResult } = require("express-validator");
 const uuid = require("uuid");
+const getCordsForAddress = require("../util/location");
 
 const DUMMY_PLACES = [
   {
@@ -48,13 +50,23 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-const createPlace = (req, res, next) => {
-  const { title, creator, location, description, address } = req.body;
+const createPlace = async (req, res, next) => {
+  const errors = validationResult(req.body);
+  if (!errors.isEmpty) {
+    throw new HttpError("Invalid input passed, please check your data", 422);
+  }
+  const { title, creator, description, address } = req.body;
+  let coordinates;
+  try {
+    coordinates = await getCordsForAddress(address);
+  } catch (error) {
+    throw error;
+  }
   const newPlace = {
     id: uuid.v4(),
     title,
     creator,
-    location,
+    location: coordinates,
     description,
     address,
   };
@@ -62,9 +74,19 @@ const createPlace = (req, res, next) => {
   res.status(201).json({ place: newPlace });
 };
 
-const updatePlaceById = (req, res, next) => {
+const updatePlaceById = async (req, res, next) => {
+  const errors = validationResult(req.body);
+  if (!errors.isEmpty) {
+    next(new HttpError("Invalid input passed, please check your data", 422));
+  }
+  const { title, creator, description, address } = req.body;
+  let coordinates;
+  try {
+    coordinates = await getCordsForAddress(address);
+  } catch (error) {
+    throw error;
+  }
   const placeId = req.params.pid;
-  const { title, creator, location, description, address } = req.body;
   const placeIndex = DUMMY_PLACES.findIndex((p, i) => p.id === placeId);
   const placeTobeUpdated = { ...DUMMY_PLACES[placeIndex] };
   if (placeIndex === -1 || placeTobeUpdated.delete === true) {
@@ -74,7 +96,7 @@ const updatePlaceById = (req, res, next) => {
     placeTobeUpdated,
     title,
     creator,
-    location,
+    location: coordinates,
     description,
     address,
   };
