@@ -140,18 +140,9 @@ const deletePlaceById = async (req, res, next) => {
   let place;
   try {
     place = await Place.deleteOne({ _id: placeId });
-    console.log("1======");
   } catch (e) {
-    console.log("2======");
     return next(new HttpError("Something went wrong, please try again", 500));
   }
-  // try {
-  //   await place.remove();
-  //   console.log("3======");
-  // } catch (e) {
-  //   console.log("4======");
-  //   return next(new HttpError("Something went wrong, please try again", 500));
-  // }
   res.status(200).json({
     message: "Deleted place",
   });
