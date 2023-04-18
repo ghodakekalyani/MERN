@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../shared/store";
 // import { Button } from "@mui/material";
@@ -23,33 +24,29 @@ const Users = () => {
       places: 1,
     },
   ];
-  // const initState = useSelector((state: RootState) => state.userReducer);
-  // const dispatch = useDispatch();
-  // console.log("initState-----", initState);
 
-  // useEffect(() => {
-  //   dispatch(fetchUserName("kalyani"));
-  // }, []);
+  const [newUsers, setNewUsers] = useState<IUserItemProps[]>([]);
 
-  // const fetchUserList = async() => {
-  //   try {
-  //   const response = await (await fetch("url", {method: 'POST', body: JSON.stringify({})})).json();
-  //   if(!response.ok) {
-  //     throw new Error("Something went wrong");
-  //   }
-  //   return response;
-  //   } catch(err: any) {
-  //       console.log(err);
-  //   }
+  const fetchUsers = useCallback(async () => {
+    try {
+      const { data } = await axios.get("http://localhost:5000/api/users");
+      console.log("data=====>", data.users);
+      const users = await data.users;
+      console.log("data users=====>", data.users);
+      setNewUsers((pre) => users);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
-  // }
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <>
-      <UserList users={users} />
-      {/* <Button onClick={() => dispatch(fetchUserName("kalyani"))}>
-        click me!
-      </Button> */}
+      {console.log("newusers----", newUsers)}
+      {newUsers.length >= 0 && <UserList users={newUsers} />}
     </>
   );
 };
