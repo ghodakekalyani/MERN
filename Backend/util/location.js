@@ -1,6 +1,6 @@
 const HttpError = require("../modules/http-error");
 const axios = require("axios");
-const API_KEY = "AIzaSyAk13jodvte5dafIFaJ1wncUf79UMVg55Y";
+const API_KEY = "AIzaSyCxXyZ36z5jIfxBuuyvI8knvirYy6M_2Ms";
 
 const getCordsForAddress = async (address) => {
   const response = await axios.get(

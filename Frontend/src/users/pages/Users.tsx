@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../shared/store";
 // import { Button } from "@mui/material";
@@ -24,9 +25,28 @@ const Users = () => {
     },
   ];
 
+  const [newUsers, setNewUsers] = useState<IUserItemProps[]>([]);
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      const { data } = await axios.get("http://localhost:5000/api/users");
+      console.log("data=====>", data.users);
+      const users = await data.users;
+      console.log("data users=====>", data.users);
+      setNewUsers((pre) => users);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <>
-      <UserList users={users} />
+      {console.log("newusers----", newUsers)}
+      {newUsers.length >= 0 && <UserList users={newUsers} />}
     </>
   );
 };
