@@ -1,66 +1,73 @@
 const HttpError = require("../modules/http-error");
 const uuid = require("uuid");
 const { validationResult } = require("express-validator");
+const User = require("../models/users");
 
-const users = [
-  {
-    id: "u1",
-    name: "kalyani k ghodake",
-    image:
-      "https://i.natgeofe.com/k/5af79b71-007d-46f8-8efe-bf37a504195b/california-golden-gate-bridge.jpg",
-    places: 3,
-    password: "hithere",
-    email: "kalyanikghodake2013@gmail.com",
-  },
-  {
-    id: "u2",
-    name: "kalyani ghodake",
-    image:
-      "https://fox40.com/wp-content/uploads/sites/13/2022/07/GettyImages-1308695861.jpg?strip=1",
-    places: 1,
-    email: "kalyani.ghodake2013@gmail.com",
-  },
-];
-
-const fetchUsersList = (req, res, next) => {
-  res.json({ users });
+const fetchUsersList = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, "-password");
+  } catch (e) {
+    return next(
+      new HttpError("fetching user list failed, please try again", 500)
+    );
+  }
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
-const addNewUser = (req, res, next) => {
-  const errors = validationResult(req.body);
+const addNewUser = async (req, res, next) => {
+  const errors = validationResult(req);
   if (!errors.isEmpty) {
     throw new HttpError("Invalid input passed, please check your data", 422);
   }
-  const { name, image, places, email } = req.body;
-  const hasUser = users.find((u) => u.email === email);
-  if (hasUser) {
-    throw new HttpError("Could not create user, user already exist", 401);
+  const { name, places, email, password } = req.body;
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (e) {
+    return next(new HttpError("Signing up failed, please try again!", 500));
   }
-  const newUser = {
-    id: uuid.v4(),
+
+  if (existingUser) {
+    return next(
+      new HttpError("Could not create user, user already exist", 422)
+    );
+  }
+  const newUser = new User({
     name,
-    image,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
     places,
     email,
-  };
-  users.push(newUser);
-  res.status(201).json({ user: newUser });
+    password,
+  });
+  try {
+    await newUser.save();
+  } catch (e) {
+    return next(new HttpError("Signing up failed, please try again!", 500));
+  }
+  res.status(201).json({ user: newUser.toObject({ getters: true }) });
 };
 
-const login = (req, res, next) => {
+const login = async (req, res, next) => {
   const errors = validationResult(req.body);
   if (!errors.isEmpty) {
     throw new HttpError("Invalid input passed, please check your data", 422);
   }
-  const { userName, password } = req.body;
-  const user = users.find((u) => u.email === userName);
+  const { email, password } = req.body;
+  let user;
+  try {
+    user = await User.findOne({ email: email });
+  } catch (e) {
+    return next(new HttpError("Login failed, please try again!", 500));
+  }
   if (!user) {
-    throw new HttpError("User data not found", 404);
+    return next(new HttpError("User data not found", 404));
   } else if (user.password !== password) {
     console.log("user.password", user.password, password);
-    throw new HttpError("Password is invalid", 401);
+    return next(new HttpError("Password is invalid", 401));
   }
-  res.status(201).json("Login successful");
+  res.status(201).json({ message: "Login successful" });
 };
 
 exports.fetchUsersList = fetchUsersList;
