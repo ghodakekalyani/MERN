@@ -20,7 +20,7 @@ const addNewUser = async (req, res, next) => {
   if (!errors.isEmpty) {
     throw new HttpError("Invalid input passed, please check your data", 422);
   }
-  const { name, places, email, password } = req.body;
+  const { name, email, password } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
@@ -37,7 +37,7 @@ const addNewUser = async (req, res, next) => {
     name,
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
-    places,
+    places: [],
     email,
     password,
   });
@@ -64,7 +64,6 @@ const login = async (req, res, next) => {
   if (!user) {
     return next(new HttpError("User data not found", 404));
   } else if (user.password !== password) {
-    console.log("user.password", user.password, password);
     return next(new HttpError("Password is invalid", 401));
   }
   res.status(201).json({ message: "Login successful" });
