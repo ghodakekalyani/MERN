@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "../shared/userReducer";
-import placeReducer from "../shared/placeReducer";
+import userReducer from "./reducers/userReducer";
+import placeReducer from "./reducers/placeReducer";
+import thunkMiddleware from "redux-thunk";
 
-export const store = configureStore({
+export const store: any = configureStore({
   reducer: {
     userReducer,
     placeReducer,
   },
+  middleware: [thunkMiddleware],
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

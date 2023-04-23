@@ -2,9 +2,10 @@ import React from "react";
 import Card from "../../shared/UIElement/Card";
 import UserItem, { IUserItemProps } from "./userItem";
 import "./userList.less";
+import { IUserState } from "../../redux/reducers/userReducer";
 
 interface IUsersListProps {
-  users: IUserItemProps[] | [];
+  users: IUserState[] | [];
 }
 
 const UserList = ({ users }: IUsersListProps) => {
@@ -20,12 +21,11 @@ const UserList = ({ users }: IUsersListProps) => {
 
   return (
     <ul className="users-list">
-      {users.map((user: IUserItemProps) => (
+      {users.map((user: IUserState) => (
         <UserItem
           key={user.id}
-          placeCount={user.places}
+          placeCount={user.places.length}
           id={user.id}
-          image={user.image}
           name={user.name}
         />
       ))}

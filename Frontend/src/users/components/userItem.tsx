@@ -7,7 +7,7 @@ import "./userItem.less";
 export interface IUserItemProps {
   id: string;
   placeCount?: number;
-  image: string;
+  image?: string;
   name: string;
   key?: string;
   places?: number;

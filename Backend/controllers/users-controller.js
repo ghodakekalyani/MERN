@@ -1,5 +1,5 @@
 const HttpError = require("../modules/http-error");
-const uuid = require("uuid");
+//const uuid = require("uuid"); used to get unique ids for dummy data
 const { validationResult } = require("express-validator");
 const User = require("../models/users");
 

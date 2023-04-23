@@ -10,7 +10,7 @@ import NewPlace from "./places/pages/NewPlace";
 import UserPLaces from "./places/pages/UserPlaces";
 import MainNavigation from "./shared/Navigation/MainNavigation";
 import Login from "./users/components/Login";
-import UserList from "./users/pages/UserList";
+import UserList from "./users/components/userList";
 import Users from "./users/pages/Users";
 
 const AppLayout = () => {
@@ -35,10 +35,10 @@ const router = createBrowserRouter(
           path: "/newplace",
           element: <NewPlace />,
         },
-        {
-          path: "/list",
-          element: <UserList />,
-        },
+        // {
+        //   path: "/list",
+        //   element: <UserList />,
+        // },
       ],
     },
   ]

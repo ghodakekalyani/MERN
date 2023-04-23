@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { IPlaceItemProps } from "../components/PlaceItem";
 import PlaceList from "../components/PlaceList";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import ErrorAlert from "../../shared/UIElement/Error";
 
 const DUMMY_PLACES: IPlaceItemProps[] = [
   {
@@ -34,6 +36,20 @@ const DUMMY_PLACES: IPlaceItemProps[] = [
 const UserPLaces = () => {
   const userId = useParams().userId;
   console.log("userId", useParams());
+  const fetchUserPlaces = useCallback(async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/places/user/${userId}`
+      );
+      console.log("data===", data);
+    } catch (e: any) {
+      console.log("e===", e.response.message);
+      <ErrorAlert message="Something went wrong!" />;
+    }
+  }, []);
+  useEffect(() => {
+    fetchUserPlaces();
+  }, [userId]);
 
   const loadedPlaces = DUMMY_PLACES.filter((place) => place.creator === userId);
   console.log("loadedPlaces", loadedPlaces);
